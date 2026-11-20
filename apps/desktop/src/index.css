@@ -80,14 +80,6 @@ select {
   background: transparent;
 }
 
-.app-drag {
-  -webkit-app-region: drag;
-}
-
-.no-drag {
-  -webkit-app-region: no-drag;
-}
-
 .glass {
   background: color-mix(in srgb, var(--panel) 78%, transparent);
   backdrop-filter: blur(18px);

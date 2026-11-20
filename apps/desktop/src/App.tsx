@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { backend, subscribeEvents } from "./lib/backend";
+import { backend, isDesktop, subscribeEvents } from "./lib/backend";
+import WindowToolbar from "./components/WindowToolbar";
 import { classifyBackendError } from "./lib/errors";
 import type { Account } from "./lib/types";
 import { useAppStore } from "./store";
@@ -131,20 +132,25 @@ export default function App() {
     root.classList.toggle("dark", dark);
   }, [settings.theme]);
 
-  if (loading) return <Splash />;
-
-  if (!account) {
+  if (loading || !account) {
     return (
-      <LoginPage
-        onLogin={(next: Account) => {
-          setAccount(next);
-          void backend.listTransfers().then(setTransfers);
-          void backend
-            .refreshAccount(next.id)
-            .then(setAccount)
-            .catch((error) => toast.error(`账号资料刷新失败：${error}`));
-        }}
-      />
+      <div className="flex h-full flex-col overflow-hidden">
+        {isDesktop ? <WindowToolbar title="夸克网盘" /> : null}
+        <div className="min-h-0 flex-1">
+          {loading ? <Splash /> : (
+            <LoginPage
+              onLogin={(next: Account) => {
+                setAccount(next);
+                void backend.listTransfers().then(setTransfers);
+                void backend
+                  .refreshAccount(next.id)
+                  .then(setAccount)
+                  .catch((error) => toast.error(`账号资料刷新失败：${error}`));
+              }}
+            />
+          )}
+        </div>
+      </div>
     );
   }
 

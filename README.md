@@ -129,6 +129,29 @@ export PKG_CONFIG_SYSROOT_DIR="/path/to/sysroot"
 npm run build:debug
 ```
 
+### 构建 Flatpak（x86_64）
+
+此分支将窗口拖动区域和最小化、最大化／还原、关闭按钮放在应用工具栏内，不再显示独立的系统标题栏。扫码登录页也保留窗口控件。
+
+先确保已启用 Flathub，再从仓库根目录执行：
+
+```bash
+flatpak install --user flathub \
+  org.gnome.Platform//50 org.gnome.Sdk//50 \
+  org.freedesktop.Sdk.Extension.rust-stable//25.08 \
+  org.freedesktop.Sdk.Extension.node24//25.08
+./build-quark-drive-titlebar.sh
+```
+
+脚本使用 GNOME SDK 编译，不需要宿主机的 Rust、Node.js 或 `flatpak-builder`。安装包和 SHA-256 校验文件位于 `dist/flatpak/`。要安装或替换同一应用标识的旧版本，请先退出正在运行的 QuarkDrive，再执行：
+
+```bash
+flatpak install --user --reinstall --bundle ./dist/flatpak/QuarkDrive-0.2.0-titlebar-x86_64.flatpak
+flatpak run cn.quarkdrive.desktop
+```
+
+`./build-quark-drive-flatpak.sh` 不带参数时仍可封装上游原版 `.deb`，不包含自定义标题栏。
+
 ## 登录
 
 1. 首次启动或登录失效时，登录页自动向夸克申请一次性二维码 token。
